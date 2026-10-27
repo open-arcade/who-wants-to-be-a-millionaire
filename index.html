@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Who Wants to Be a Millionaire?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#03051a;--blue:#0f1b73;--blue2:#060a38;--gold:#d9b25f;--gold2:#8a6a24;--ink:#eef0fb;--mut:#8e97cf;--ok:#1f9d55;--bad:#c2372f;--lock:#e9951c;
+--disp:Cinzel,"Trajan Pro",Georgia,serif;--sans:Inter,"Helvetica Neue",Arial,sans-serif;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;margin:0}
+html,body{min-height:100%}
+body{background:radial-gradient(1000px 560px at 50% -90px,#26399e,#0a1250 48%,var(--bg) 100%) fixed;background-color:var(--bg);color:var(--ink);font:400 15px/1.5 var(--sans);-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer;background:none;border:0}
+.wrap{max-width:1080px;margin:0 auto;padding:18px 22px 50px}
+.nav{display:flex;justify-content:flex-end}.link{font-size:12px;color:var(--mut);letter-spacing:.08em}.link:hover{color:var(--ink)}
+.screen{display:none}.screen.on{display:block;animation:fade .6s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}}
+.hex{clip-path:polygon(0 50%,22px 0,calc(100% - 22px) 0,100% 50%,calc(100% - 22px) 100%,22px 100%)}
+.disp{font-family:var(--disp)}
+/* start */
+#start{text-align:center;padding-top:5vh}
+.seal{width:132px;height:132px;margin:0 auto 26px;border-radius:50%;border:1px solid var(--gold);display:grid;place-items:center;background:radial-gradient(circle at 50% 30%,#2c3fb0,#070b3f 70%);box-shadow:inset 0 0 0 6px #070b3f,inset 0 0 0 7px #d9b25f66,0 20px 50px #0008}
+.seal span{font:700 64px var(--disp);color:var(--gold)}
+h1{font:700 clamp(32px,6vw,62px)/1.08 var(--disp);letter-spacing:.04em;text-transform:uppercase;margin-bottom:14px}
+.sub{color:var(--mut);max-width:520px;margin:0 auto 30px}
+.rules{max-width:640px;margin:0 auto 34px;text-align:left;display:grid;gap:0;border:1px solid #d9b25f55;background:#060a3866}
+.rules div{padding:11px 18px;border-bottom:1px solid #d9b25f26;color:var(--mut);font-size:14px}.rules div:last-child{border:0}
+.rules b{color:var(--gold);font:600 12px var(--sans);letter-spacing:.14em;text-transform:uppercase;margin-right:10px}
+.cta{padding:2px;background:var(--gold);transition:filter .2s,transform .2s;display:inline-block}
+.cta span{display:block;padding:15px 52px;background:linear-gradient(180deg,#1a2a96,#080d45);font:700 15px var(--disp);letter-spacing:.18em;text-transform:uppercase;color:var(--gold);clip-path:inherit}
+.cta:hover{filter:brightness(1.2);transform:translateY(-1px)}.cta:disabled{opacity:.6;cursor:wait}
+/* game */
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:22px}
+.jk{display:flex;gap:12px}
+.joker{position:relative;width:78px;height:46px;border-radius:50%;border:1px solid var(--gold);background:linear-gradient(180deg,#1b2a96,#070b3f);font:700 14px var(--disp);color:var(--gold);display:grid;place-items:center;transition:.2s}
+.joker svg{width:24px;height:20px}
+.joker:hover:not(:disabled){box-shadow:0 0 0 3px #d9b25f33;filter:brightness(1.25)}
+.joker:disabled{opacity:.45;border-color:#6d7399;color:#8a90b8;cursor:not-allowed}
+.joker:disabled::after{content:"✕";position:absolute;inset:0;display:grid;place-items:center;font:400 34px var(--sans);color:var(--bad)}
+.clock{position:relative;width:70px;height:70px}.clock svg{transform:rotate(-90deg)}.clock circle{fill:#070b3f;stroke-width:3}
+#ring{stroke:var(--gold);transition:stroke-dashoffset 1s linear,stroke .4s}
+#tn{position:absolute;inset:0;display:grid;place-items:center;font:700 24px var(--disp);font-variant-numeric:tabular-nums}
+.clock.low #ring{stroke:var(--bad)}.clock.low #tn{color:#ff7a70}.clock.low{animation:pulse .6s infinite alternate}
+@keyframes pulse{to{transform:scale(1.07)}}
+.prize{text-align:right;font:700 22px var(--disp);color:var(--gold)}.prize small{display:block;font:500 10px var(--sans);letter-spacing:.2em;color:var(--mut)}
+.grid{display:grid;grid-template-columns:1fr 230px;gap:34px}
+.qwrap{position:relative;margin:6px 0 18px}
+.qwrap::before{content:"";position:absolute;left:-30px;right:-30px;top:50%;height:1px;background:linear-gradient(90deg,transparent,var(--gold) 14%,var(--gold) 86%,transparent)}
+.qb{position:relative;padding:2px;background:var(--gold)}
+.q{display:grid;place-items:center;text-align:center;min-height:116px;padding:22px 44px;font:500 clamp(18px,2.6vw,25px)/1.35 var(--sans);background:linear-gradient(180deg,#1a2a96,#070b3f);clip-path:inherit;animation:fade .5s}
+.ans{display:grid;grid-template-columns:1fr 1fr;gap:14px 26px;position:relative}
+.ans::before{content:"";position:absolute;left:-30px;right:-30px;top:50%;height:0;border-top:1px solid #d9b25f40;z-index:0}
+.a{position:relative;z-index:1;padding:2px;background:var(--gold);transition:transform .15s,filter .15s;animation:fade .5s backwards;display:block;width:100%;text-align:left}
+.a:nth-child(2){animation-delay:.06s}.a:nth-child(3){animation-delay:.12s}.a:nth-child(4){animation-delay:.18s}
+.a .in{display:flex;gap:12px;align-items:center;padding:14px 34px;min-height:56px;font-weight:500;font-size:clamp(14px,2vw,17px);background:linear-gradient(180deg,#141f84,#060a38);clip-path:inherit;transition:background .2s,color .2s}
+.a i{font:700 15px var(--disp);color:var(--lock);font-style:normal}
+.a:hover:not(:disabled){filter:brightness(1.2)}
+.a:hover:not(:disabled) .in{background:linear-gradient(180deg,#2638b0,#0c1260)}
+.a.sel{background:var(--lock)}.a.sel .in{background:linear-gradient(180deg,#f0a430,#b8680c);color:#1c0e00}.a.sel i{color:#1c0e00}
+.a.ok{background:#4be08a}.a.ok .in{background:linear-gradient(180deg,#25b062,#0f7038);color:#fff;animation:flash .3s 4}.a.ok i{color:#fff}
+.a.bad{background:#ff8d86}.a.bad .in{background:linear-gradient(180deg,#d8453c,#8d1d17);color:#fff}.a.bad i{color:#fff}
+.a.gone{visibility:hidden}
+.a:disabled{cursor:default}
+@keyframes flash{50%{filter:brightness(1.6)}}
+.bar{margin-top:20px;display:flex;justify-content:space-between;align-items:center;gap:14px;min-height:50px;flex-wrap:wrap}
+.msg{color:var(--mut);font-size:14px}
+.final{font:700 17px var(--disp);color:var(--gold);letter-spacing:.04em}
+.btn{padding:11px 24px;border:1px solid var(--gold);font:600 12px var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--gold);transition:.2s}
+.btn:hover{background:var(--gold);color:#120d00}.btn.go{background:var(--gold);color:#120d00}.btn.go:hover{filter:brightness(1.15)}
+.btn.walk{border-color:#6f78b8;color:#b5bdf0}.btn.walk:hover{background:#6f78b8;color:#060a38}
+.aud{display:flex;gap:16px;align-items:flex-end;height:128px;padding:14px 22px;margin-bottom:14px;border:1px solid #d9b25f66;background:#060a38cc;animation:fade .4s}
+.aud div{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;gap:5px;font-size:12px;color:var(--mut)}
+.aud b{width:100%;max-width:50px;background:linear-gradient(180deg,#f0c56a,var(--gold2));transition:height .9s cubic-bezier(.2,.8,.2,1);height:0}
+.aud em{font:700 13px var(--disp);font-style:normal;color:var(--ink)}
+.ladder{display:flex;flex-direction:column-reverse;align-self:start;border:1px solid #d9b25f55;background:#060a3899;padding:6px}
+.l{display:flex;justify-content:space-between;padding:6px 14px;font:500 14px var(--sans);font-variant-numeric:tabular-nums;color:var(--lock)}
+.l span:first-child{opacity:.7;width:26px}
+.l.safe{color:#fff;font-weight:600}
+.l.done{opacity:.4}
+.l.cur{background:var(--lock);color:#1c0e00;font-weight:700}
+#end{text-align:center;padding-top:9vh}
+#end .eb{font:600 12px var(--sans);letter-spacing:.24em;text-transform:uppercase;color:var(--mut)}
+#end .big{font:700 clamp(54px,13vw,120px)/1 var(--disp);color:var(--gold);margin:14px 0 18px}
+#end p{color:var(--mut);max-width:480px;margin:0 auto 32px;font-size:17px}
+@media(max-width:860px){.grid{grid-template-columns:1fr}.ladder{display:none}.ans{grid-template-columns:1fr}.ans::before{display:none}.q{padding:20px 34px}}
+</style></head><body>
+<div class="wrap">
+<div class="nav"><button class="link" id="mute">Sound on</button></div>
+
+<section id="start" class="screen on">
+ <div class="seal"><span>$</span></div>
+ <h1>Who wants to be<br>a millionaire?</h1>
+ <p class="sub">Fifteen questions. One million dollars.</p>
+ <button class="cta hex" id="play"><span>Take the hot seat</span></button>
+</section>
+
+<section id="game" class="screen">
+ <div class="top">
+  <div class="jk"><button class="joker" id="jf" title="50:50">50:50</button><button class="joker" id="ja" title="Ask the audience"><svg viewBox="0 0 24 20" fill="currentColor"><rect x="2" y="9" width="5" height="9"/><rect x="9.5" y="2" width="5" height="16"/><rect x="17" y="6" width="5" height="12"/></svg></button></div>
+  <div class="clock" id="clock"><svg width="70" height="70" viewBox="0 0 70 70"><circle cx="35" cy="35" r="32" stroke="#d9b25f33"/><circle id="ring" cx="35" cy="35" r="32" stroke-dasharray="201.06" stroke-dashoffset="0"/></svg><div id="tn">90</div></div>
+  <div class="prize"><small>PLAYING FOR</small><span id="pf"></span></div>
+ </div>
+ <div class="grid">
+  <div>
+   <div class="qwrap"><div class="qb hex"><div class="q" id="q"></div></div></div>
+   <div id="audbox"></div>
+   <div class="ans" id="ans"></div>
+   <div class="bar" id="bar"></div>
+  </div>
+  <div class="ladder" id="ladder"></div>
+ </div>
+</section>
+
+<section id="end" class="screen">
+ <div class="eb" id="eh"></div>
+ <div class="big" id="ep"></div>
+ <p id="et"></p>
+ <button class="cta hex" id="again"><span>Play again</span></button>
+</section>
+</div>
+
+<script>
+const L=[100,200,300,500,1000,2000,4000,8000,16000,32000,64000,125000,250000,500000,1000000],SAFE=[4,9];
+const B=[],POOL={};
+function pair(c,tpl,arr){arr.forEach((s,t)=>s.split(";").forEach(p=>{const[x,y]=p.split("|");B.push({c,t,q:tpl(x),a:y});(POOL[c]=POOL[c]||new Set).add(y)}))}
+pair("cap",x=>`What is the capital of ${x}?`,[
+"France|Paris;Italy|Rome;Spain|Madrid;Germany|Berlin;Japan|Tokyo;Egypt|Cairo;Canada|Ottawa;Russia|Moscow;China|Beijing;Greece|Athens;Portugal|Lisbon;Poland|Warsaw;Turkey|Ankara;Brazil|Brasília;India|New Delhi;Argentina|Buenos Aires;Mexico|Mexico City;Ireland|Dublin;Norway|Oslo;Sweden|Stockholm",
+"Austria|Vienna;Hungary|Budapest;Czechia|Prague;Switzerland|Bern;Belgium|Brussels;Netherlands|Amsterdam;Finland|Helsinki;Denmark|Copenhagen;Thailand|Bangkok;Vietnam|Hanoi;Kenya|Nairobi;Morocco|Rabat;Peru|Lima;Chile|Santiago;Colombia|Bogotá;New Zealand|Wellington;Pakistan|Islamabad;Iran|Tehran;Saudi Arabia|Riyadh;Ukraine|Kyiv;Cuba|Havana;Nigeria|Abuja;South Korea|Seoul",
+"Myanmar|Naypyidaw;Kazakhstan|Astana;Ethiopia|Addis Ababa;Mongolia|Ulaanbaatar;Uzbekistan|Tashkent;Slovakia|Bratislava;Slovenia|Ljubljana;Croatia|Zagreb;Latvia|Riga;Estonia|Tallinn;Lithuania|Vilnius;Iceland|Reykjavik;Ghana|Accra;Tanzania|Dodoma;Ivory Coast|Yamoussoukro;Madagascar|Antananarivo;Bhutan|Thimphu;Nepal|Kathmandu;Laos|Vientiane;Cambodia|Phnom Penh;Paraguay|Asunción;Uruguay|Montevideo;Ecuador|Quito;Suriname|Paramaribo;Malta|Valletta;Belarus|Minsk;Azerbaijan|Baku;Georgia|Tbilisi;Armenia|Yerevan;Burkina Faso|Ouagadougou"]);
+pair("cur",x=>`Which currency is used in ${x}?`,[
+"Japan|Yen;United Kingdom|Pound sterling;India|Rupee;Russia|Ruble;Mexico|Peso",
+"Poland|Złoty;Sweden|Krona;Brazil|Real;South Africa|Rand;South Korea|Won;China|Yuan;Switzerland|Franc;Turkey|Lira;Czechia|Koruna",
+"Hungary|Forint;Thailand|Baht;Vietnam|Dong;Israel|Shekel;Ukraine|Hryvnia;Norway|Krone"]);
+pair("el",x=>`What is the chemical symbol for ${x}?`,[
+"Oxygen|O;Hydrogen|H;Carbon|C;Gold|Au;Silver|Ag;Iron|Fe;Sodium|Na;Helium|He",
+"Potassium|K;Lead|Pb;Tin|Sn;Copper|Cu;Mercury|Hg;Tungsten|W;Neon|Ne;Calcium|Ca;Zinc|Zn",
+"Antimony|Sb;Platinum|Pt;Cadmium|Cd;Iridium|Ir;Bismuth|Bi;Molybdenum|Mo;Rubidium|Rb"]);
+pair("art",x=>`Who painted “${x}”?`,[
+"Mona Lisa|Leonardo da Vinci;The Starry Night|Vincent van Gogh;Guernica|Pablo Picasso;The Scream|Edvard Munch",
+"The Birth of Venus|Sandro Botticelli;Girl with a Pearl Earring|Johannes Vermeer;The Persistence of Memory|Salvador Dalí;The Kiss|Gustav Klimt;Water Lilies|Claude Monet;The Night Watch|Rembrandt",
+"Las Meninas|Diego Velázquez;The Garden of Earthly Delights|Hieronymus Bosch;Liberty Leading the People|Eugène Delacroix;The Third of May 1808|Francisco Goya;Nighthawks|Edward Hopper;American Gothic|Grant Wood"]);
+pair("book",x=>`Who wrote “${x}”?`,[
+"Harry Potter and the Philosopher’s Stone|J. K. Rowling;Nineteen Eighty-Four|George Orwell;Pride and Prejudice|Jane Austen;Hamlet|William Shakespeare;The Hobbit|J. R. R. Tolkien",
+"Moby-Dick|Herman Melville;Crime and Punishment|Fyodor Dostoevsky;Don Quixote|Miguel de Cervantes;The Great Gatsby|F. Scott Fitzgerald;Frankenstein|Mary Shelley;Brave New World|Aldous Huxley;Les Misérables|Victor Hugo;The Trial|Franz Kafka",
+"Ulysses|James Joyce;The Master and Margarita|Mikhail Bulgakov;Invisible Man|Ralph Ellison;Things Fall Apart|Chinua Achebe;The Magic Mountain|Thomas Mann;Dead Souls|Nikolai Gogol;Quo Vadis|Henryk Sienkiewicz;Pan Tadeusz|Adam Mickiewicz;Solaris|Stanisław Lem"]);
+`0|How many days are in a leap year?|366|365|364|367
+0|Which is the largest ocean?|Pacific Ocean|Atlantic Ocean|Indian Ocean|Arctic Ocean
+0|How many sides does a hexagon have?|Six|Five|Seven|Eight
+0|What is the largest mammal on Earth?|Blue whale|African elephant|Giraffe|Polar bear
+0|Which gas do plants absorb from the air?|Carbon dioxide|Oxygen|Nitrogen|Helium
+0|What is the hardest natural substance?|Diamond|Quartz|Granite|Topaz
+0|At sea level, at what temperature in °C does water boil?|100|90|110|120
+0|How many players does one football team have on the pitch?|Eleven|Ten|Nine|Twelve
+0|Which country is home to the kangaroo?|Australia|New Zealand|South Africa|Brazil
+0|Which planet is famous for its rings?|Saturn|Mars|Mercury|Venus
+0|Which planet is the largest in our solar system?|Jupiter|Saturn|Neptune|Earth
+0|Who was the first person to walk on the Moon?|Neil Armstrong|Buzz Aldrin|Yuri Gagarin|Michael Collins
+0|Which mountain is the highest above sea level?|Mount Everest|K2|Kangchenjunga|Mont Blanc
+0|In which year did World War II end?|1945|1943|1944|1946
+0|Julius Caesar ruled which empire?|Roman|Greek|Ottoman|Persian
+0|Which part of the cell is called its powerhouse?|Mitochondria|Ribosome|Nucleus|Golgi apparatus
+0|Who painted the ceiling of the Sistine Chapel?|Michelangelo|Raphael|Donatello|Titian
+0|What is the closest star to Earth?|The Sun|Proxima Centauri|Sirius|Polaris
+0|Which city is home to the Colosseum?|Rome|Athens|Naples|Milan
+0|What is the main language spoken in Brazil?|Portuguese|Spanish|Brazilian|French
+1|Who developed the theory of general relativity?|Albert Einstein|Niels Bohr|Max Planck|Isaac Newton
+1|Which language has the most native speakers?|Mandarin Chinese|English|Spanish|Hindi
+1|Who composed “The Four Seasons”?|Antonio Vivaldi|Johann Sebastian Bach|Joseph Haydn|George Frideric Handel
+1|The Rosetta Stone helped decipher which writing system?|Egyptian hieroglyphs|Cuneiform|Linear B|Mayan glyphs
+1|Who discovered penicillin?|Alexander Fleming|Louis Pasteur|Joseph Lister|Robert Koch
+1|Which astronomer proposed the heliocentric model in 1543?|Nicolaus Copernicus|Galileo Galilei|Johannes Kepler|Tycho Brahe
+1|Which vitamin does the skin produce in sunlight?|Vitamin D|Vitamin C|Vitamin A|Vitamin K
+1|Which city hosted the 2016 Summer Olympics?|Rio de Janeiro|London|Beijing|Tokyo
+1|Which gas makes up most of Earth’s atmosphere?|Nitrogen|Oxygen|Argon|Carbon dioxide
+1|Which battle ended Napoleon’s rule in 1815?|Waterloo|Austerlitz|Leipzig|Borodino
+1|What is the SI unit of electrical resistance?|Ohm|Volt|Ampere|Watt
+1|Which city was the capital of the Byzantine Empire?|Constantinople|Antioch|Alexandria|Athens
+1|Who composed the opera “The Magic Flute”?|Wolfgang Amadeus Mozart|Ludwig van Beethoven|Giuseppe Verdi|Richard Wagner
+1|What is the longest bone in the human body?|Femur|Tibia|Humerus|Fibula
+1|Which country gave the Statue of Liberty to the United States?|France|United Kingdom|Spain|Italy
+1|Which is the longest river in Europe?|Volga|Danube|Rhine|Dnieper
+1|Which is the smallest country in the world by area?|Vatican City|Monaco|San Marino|Liechtenstein
+1|In which year did the Berlin Wall fall?|1989|1987|1991|1985
+1|Which chemical element has the atomic number 26?|Iron|Nickel|Cobalt|Manganese
+2|Which treaty ended the Thirty Years’ War in 1648?|Peace of Westphalia|Treaty of Versailles|Treaty of Utrecht|Congress of Vienna
+2|Who proved the incompleteness theorems?|Kurt Gödel|Alan Turing|David Hilbert|Bertrand Russell
+2|Who formulated the uncertainty principle in quantum mechanics?|Werner Heisenberg|Erwin Schrödinger|Max Born|Paul Dirac
+2|Which river flows through Baghdad?|Tigris|Euphrates|Nile|Jordan
+2|In which year did the Chernobyl disaster occur?|1986|1984|1979|1991
+2|Who wrote “Critique of Pure Reason”?|Immanuel Kant|Georg Hegel|Arthur Schopenhauer|David Hume
+2|Who was the first Roman emperor?|Augustus|Julius Caesar|Nero|Trajan
+2|Which particle carries the electromagnetic force?|Photon|Gluon|Graviton|W boson
+2|Which two countries signed the Treaty of Tordesillas in 1494?|Spain and Portugal|France and England|Spain and France|Portugal and England
+2|Which Chinese dynasty built the Forbidden City?|Ming|Qing|Tang|Han
+2|Who developed the first successful polio vaccine?|Jonas Salk|Albert Sabin|Edward Jenner|Louis Pasteur
+2|Who wrote “The Wealth of Nations”?|Adam Smith|David Ricardo|John Maynard Keynes|Karl Marx
+2|Which country spans the most time zones, counting overseas territories?|France|Russia|United States|China
+2|Who was the first woman to win a Nobel Prize?|Marie Curie|Bertha von Suttner|Dorothy Hodgkin|Irène Joliot-Curie
+2|Which mathematician proved Fermat’s Last Theorem in the 1990s?|Andrew Wiles|Grigori Perelman|Terence Tao|John Nash
+2|Which 1410 battle saw Poland and Lithuania defeat the Teutonic Order?|Grunwald|Legnica|Varna|Kosovo
+2|Who wrote “One Hundred Years of Solitude”?|Gabriel García Márquez|Mario Vargas Llosa|Jorge Luis Borges|Pablo Neruda`.split("\n").forEach(l=>{const[t,q,a,...w]=l.split("|");B.push({c:"gen",t:+t,q,a,w})});
+const P2=(c,tpl,t,s)=>s.split(";").forEach(p=>{const[x,y]=p.split("|");B.push({c,t,q:tpl(x),a:y});(POOL[c]=POOL[c]||new Set).add(y)});
+P2("cap",x=>`What is the capital of ${x}?`,3,"Brunei|Bandar Seri Begawan;Comoros|Moroni;Djibouti|Djibouti City;Eritrea|Asmara;Guinea-Bissau|Bissau;Lesotho|Maseru;Malawi|Lilongwe;Mauritania|Nouakchott;Niger|Niamey;Sierra Leone|Freetown;Togo|Lomé;Vanuatu|Port Vila;Marshall Islands|Majuro;Micronesia|Palikir;Samoa|Apia;Tonga|Nuku’alofa;Seychelles|Victoria;Cabo Verde|Praia;Gambia|Banjul;Chad|N’Djamena;Gabon|Libreville;Equatorial Guinea|Malabo;Mozambique|Maputo;Zimbabwe|Harare;Zambia|Lusaka;Namibia|Windhoek;Botswana|Gaborone;Angola|Luanda;Democratic Republic of the Congo|Kinshasa;Republic of the Congo|Brazzaville;Palau|Ngerulmud;Mali|Bamako;Guinea|Conakry;Somalia|Mogadishu;Sudan|Khartoum;South Sudan|Juba;Rwanda|Kigali;Uganda|Kampala");
+const NB=x=>`Who won the Nobel Prize in Literature in ${x}?`;
+P2("nob",NB,3,"1953|Winston Churchill;1954|Ernest Hemingway;1957|Albert Camus;1962|John Steinbeck;1949|William Faulkner;1982|Gabriel García Márquez;2018|Olga Tokarczuk");
+P2("nob",NB,4,"1924|Władysław Reymont;1996|Wisława Szymborska;1980|Czesław Miłosz;1905|Henryk Sienkiewicz;1988|Naguib Mahfouz;1986|Wole Soyinka;1991|Nadine Gordimer;1995|Seamus Heaney;2005|Harold Pinter;2013|Alice Munro;2009|Herta Müller;1923|W. B. Yeats;1948|T. S. Eliot;1925|George Bernard Shaw;1969|Samuel Beckett;1970|Aleksandr Solzhenitsyn;1993|Toni Morrison");
+const AN=x=>`Which element has the atomic number ${x}?`;
+P2("num",AN,3,"47|Silver;79|Gold;82|Lead;50|Tin;80|Mercury;92|Uranium;53|Iodine;74|Tungsten;78|Platinum;29|Copper");
+P2("num",AN,4,"33|Arsenic;48|Cadmium;83|Bismuth;56|Barium;38|Strontium;31|Gallium;77|Iridium;76|Osmium;75|Rhenium;73|Tantalum;72|Hafnium;42|Molybdenum;51|Antimony;34|Selenium;52|Tellurium;45|Rhodium;46|Palladium;49|Indium;81|Thallium");
+const CP=x=>`Who composed “${x}”?`;
+P2("com",CP,2,"Boléro|Maurice Ravel;The Planets|Gustav Holst;Rhapsody in Blue|George Gershwin;Messiah|George Frideric Handel;Tosca|Giacomo Puccini");
+P2("com",CP,3,"Carmina Burana|Carl Orff;Pictures at an Exhibition|Modest Mussorgsky;Peer Gynt|Edvard Grieg;Symphonie fantastique|Hector Berlioz;The Moldau|Bedřich Smetana;Finlandia|Jean Sibelius;Gymnopédies|Erik Satie;Clair de lune|Claude Debussy;The Firebird|Igor Stravinsky;Requiem (K. 626)|Wolfgang Amadeus Mozart;Nabucco|Giuseppe Verdi;Parsifal|Richard Wagner");
+P2("com",CP,4,"Appalachian Spring|Aaron Copland;Ein Heldenleben|Richard Strauss;Das Lied von der Erde|Gustav Mahler;Lieutenant Kijé|Sergei Prokofiev;Concierto de Aranjuez|Joaquín Rodrigo;Prélude à l’après-midi d’un faune|Claude Debussy;Halka|Stanisław Moniuszko;Wozzeck|Alban Berg;Peter Grimes|Benjamin Britten");
+`2|Battle of Hastings|1066
+2|signing of Magna Carta|1215
+2|Fall of Constantinople|1453
+3|Battle of Agincourt|1415
+3|Battle of Tours|732
+4|Battle of Manzikert|1071
+4|Battle of Kosovo Polje|1389
+4|Battle of Mohács|1526
+3|Battle of Lepanto|1571
+3|Peace of Westphalia|1648
+3|Battle of Vienna relieved by Sobieski|1683
+4|Battle of Blenheim|1704
+4|Battle of Poltava|1709
+4|Treaty of Utrecht|1713
+4|Battle of Plassey|1757
+4|Third Partition of Poland|1795
+3|Battle of Trafalgar|1805
+4|Battle of Jena–Auerstedt|1806
+3|Battle of Borodino|1812
+4|Battle of Leipzig|1813
+4|Battle of Navarino|1827
+3|Spring of Nations revolutions|1848
+4|Battle of Sedan|1870
+4|Battle of Adwa|1896
+3|Battle of Tsushima|1905
+3|Treaty of Brest-Litovsk|1918`.split("\n").forEach(l=>{const[t,x,y]=l.split("|");B.push({c:"yr",t:+t,q:`In which year did the ${x} take place?`,a:y,y:+y})});
+`2|Which English king sealed Magna Carta in 1215?|John|Henry III|Richard I|Edward I
+3|Which scientist discovered the electron in 1897?|J. J. Thomson|Ernest Rutherford|Niels Bohr|James Chadwick
+3|Who wrote the epic poem “Paradise Lost”?|John Milton|John Dryden|Edmund Spenser|Alexander Pope
+3|Which philosopher wrote “Being and Time”?|Martin Heidegger|Edmund Husserl|Karl Jaspers|Jean-Paul Sartre
+3|What is the capital of the Canadian province of Saskatchewan?|Regina|Saskatoon|Winnipeg|Calgary
+3|Which composer wrote “The Rite of Spring”?|Igor Stravinsky|Sergei Prokofiev|Claude Debussy|Maurice Ravel
+3|What is the largest moon of Saturn?|Titan|Enceladus|Rhea|Iapetus
+3|Who was the first Secretary-General of the United Nations?|Trygve Lie|Dag Hammarskjöld|U Thant|Kofi Annan
+3|Which Polish king led the relief of Vienna in 1683?|John III Sobieski|Stephen Báthory|Władysław IV Vasa|Casimir III the Great
+3|Which physicist discovered the neutron in 1932?|James Chadwick|Ernest Rutherford|Enrico Fermi|Otto Hahn
+3|Which country first gave women the national vote, in 1893?|New Zealand|Finland|Australia|Norway
+3|Which is the longest river in Asia?|Yangtze|Yellow River|Mekong|Ganges
+3|Hungarian belongs to which language family?|Uralic|Indo-European|Turkic|Slavic
+3|Who painted “The Arnolfini Portrait”?|Jan van Eyck|Rogier van der Weyden|Hans Memling|Pieter Bruegel the Elder
+3|Which Greek mathematician wrote the “Elements”?|Euclid|Archimedes|Pythagoras|Apollonius
+3|Which secret 1939 pact divided Eastern Europe between Germany and the USSR?|Molotov–Ribbentrop Pact|Treaty of Rapallo|Munich Agreement|Tripartite Pact
+3|Which chemist proposed the ring structure of benzene?|August Kekulé|Justus von Liebig|Friedrich Wöhler|Robert Bunsen
+3|Who first observed bacteria through a microscope?|Antonie van Leeuwenhoek|Robert Hooke|Christiaan Huygens|Jan Swammerdam
+3|Who composed the opera “Eugene Onegin”?|Pyotr Ilyich Tchaikovsky|Modest Mussorgsky|Nikolai Rimsky-Korsakov|Sergei Rachmaninoff
+3|Which Roman emperor, with Licinius, issued the Edict of Milan?|Constantine I|Diocletian|Theodosius I|Justinian I
+3|What is the SI base unit of luminous intensity?|Candela|Lumen|Lux|Kelvin
+3|Which Roman general defeated Hannibal at Zama?|Scipio Africanus|Fabius Maximus|Marcellus|Pompey
+3|Which sultan conquered Constantinople in 1453?|Mehmed II|Suleiman I|Selim I|Murad II
+3|What is the point of Earth’s orbit closest to the Sun called?|Perihelion|Aphelion|Perigee|Apogee
+3|Which Hungarian mathematician co-authored papers with hundreds of collaborators?|Paul Erdős|John von Neumann|George Pólya|László Lovász
+3|Who composed the Mass in B minor?|Johann Sebastian Bach|George Frideric Handel|Wolfgang Amadeus Mozart|Joseph Haydn
+3|Which African empire was ruled by Mansa Musa?|Mali Empire|Songhai Empire|Ghana Empire|Kanem–Bornu Empire
+3|Who wrote “Metamorphoses”?|Ovid|Virgil|Horace|Lucretius
+3|Which body of water has the lowest land shore on Earth?|Dead Sea|Caspian Sea|Lake Assal|Salton Sea
+4|Which mathematician conjectured in 1742 that every even integer above 2 is the sum of two primes?|Christian Goldbach|Leonhard Euler|Pierre de Fermat|Carl Friedrich Gauss
+4|Which Byzantine emperor, with Belisarius, reconquered much of the western Mediterranean?|Justinian I|Heraclius|Basil II|Constantine XI
+4|Who was the last emperor of the Western Roman Empire, deposed in 476?|Romulus Augustulus|Julius Nepos|Majorian|Avitus
+4|Which Persian polymath wrote “The Canon of Medicine”?|Avicenna|Averroes|Al-Razi|Al-Khwarizmi
+4|Who wrote the “Tractatus Logico-Philosophicus”?|Ludwig Wittgenstein|Rudolf Carnap|Karl Popper|Moritz Schlick
+4|Which is the longest river in Poland?|Vistula|Oder|Warta|Bug
+4|Which 1909 manifesto by Marinetti launched which art movement?|Futurism|Dadaism|Cubism|Vorticism
+4|Which chemist synthesised urea from inorganic compounds in 1828?|Friedrich Wöhler|Justus von Liebig|August Kekulé|Robert Bunsen
+4|Who proved that the real numbers are uncountable?|Georg Cantor|Richard Dedekind|Leopold Kronecker|Bernhard Riemann
+4|Who measured the speed of light using Jupiter’s moons in 1676?|Ole Rømer|Christiaan Huygens|Giovanni Cassini|Galileo Galilei
+4|Which element is usually cited as the rarest naturally occurring in Earth’s crust?|Astatine|Francium|Promethium|Technetium
+4|Which Polish mathematician co-authored a famous 1924 paradox on doubling a ball with Alfred Tarski?|Stefan Banach|Wacław Sierpiński|Stanisław Ulam|Kazimierz Kuratowski
+4|Whose fleet was destroyed at Aegospotami in 405 BC?|Athens|Sparta|Corinth|Thebes
+4|Which dynasty ruled Persia during the Battle of al-Qadisiyyah?|Sasanian|Achaemenid|Parthian|Safavid
+4|What is the oldest university in Poland?|Jagiellonian University|University of Warsaw|University of Wrocław|Adam Mickiewicz University
+4|In which language was the Rigveda composed?|Vedic Sanskrit|Pali|Prakrit|Tamil
+4|Who became the first official World Chess Champion in 1886?|Wilhelm Steinitz|Emanuel Lasker|José Raúl Capablanca|Paul Morphy
+4|Who wrote “The Man Without Qualities”?|Robert Musil|Hermann Broch|Joseph Roth|Stefan Zweig
+4|Which Russian mathematician developed non-Euclidean geometry independently of Bolyai?|Nikolai Lobachevsky|Pafnuty Chebyshev|Andrey Markov|Sofia Kovalevskaya
+4|Which Danish physicist discovered the link between electricity and magnetism in 1820?|Hans Christian Ørsted|Michael Faraday|André-Marie Ampère|Georg Ohm
+4|Who discovered the first radio pulsar in 1967?|Jocelyn Bell Burnell|Antony Hewish|Fred Hoyle|Martin Ryle
+4|Who wrote “The Decline of the West”?|Oswald Spengler|Arnold Toynbee|Max Weber|Ernst Jünger
+4|Which conference of 1943 first brought Churchill, Roosevelt and Stalin together?|Tehran Conference|Yalta Conference|Potsdam Conference|Casablanca Conference
+4|Who was British Prime Minister during the 1956 Suez Crisis?|Anthony Eden|Harold Macmillan|Winston Churchill|Clement Attlee
+4|Who was the first President of the Second Polish Republic?|Gabriel Narutowicz|Józef Piłsudski|Ignacy Mościcki|Stanisław Wojciechowski`.split("\n").forEach(l=>{const[t,q,a,...w]=l.split("|");B.push({c:"gen",t:+t,q,a,w})});
+P2("us",x=>`What is the capital of the US state of ${x}?`,1,"California|Sacramento;Texas|Austin;Florida|Tallahassee;New York|Albany;Illinois|Springfield;Washington|Olympia");
+P2("us",x=>`What is the capital of the US state of ${x}?`,2,"Alaska|Juneau;Hawaii|Honolulu;Nevada|Carson City;Montana|Helena;Idaho|Boise;Wyoming|Cheyenne;Vermont|Montpelier;Maine|Augusta;Michigan|Lansing;Pennsylvania|Harrisburg");
+P2("us",x=>`What is the capital of the US state of ${x}?`,3,"Kentucky|Frankfort;Mississippi|Jackson;South Dakota|Pierre;North Dakota|Bismarck;Nebraska|Lincoln;Delaware|Dover;West Virginia|Charleston;Rhode Island|Providence;Minnesota|Saint Paul;New Hampshire|Concord;Oklahoma|Oklahoma City;South Carolina|Columbia;Alabama|Montgomery;Louisiana|Baton Rouge;Wisconsin|Madison;Oregon|Salem;New Mexico|Santa Fe;Arkansas|Little Rock;Missouri|Jefferson City");
+const PL=x=>`Who created the ${x} programming language?`;
+P2("pl",PL,1,"Python|Guido van Rossum;Java|James Gosling");
+P2("pl",PL,2,"C|Dennis Ritchie;JavaScript|Brendan Eich;C++|Bjarne Stroustrup");
+P2("pl",PL,3,"Perl|Larry Wall;Ruby|Yukihiro Matsumoto;PHP|Rasmus Lerdorf;Pascal|Niklaus Wirth;Lisp|John McCarthy;Fortran|John Backus");
+P2("pl",PL,4,"Rust|Graydon Hoare;Swift|Chris Lattner");
+const OL=x=>`Which city hosted the Summer Olympics in ${x}?`;
+P2("ol",OL,1,"2000|Sydney;2004|Athens;2008|Beijing;1992|Barcelona;1996|Atlanta");
+P2("ol",OL,2,"1988|Seoul;1984|Los Angeles;1980|Moscow;1972|Munich;1964|Tokyo;1960|Rome");
+P2("ol",OL,3,"1976|Montreal;1968|Mexico City;1956|Melbourne;1952|Helsinki;1936|Berlin");
+P2("ol",OL,4,"1912|Stockholm;1924|Paris;1948|London");
+const WC=x=>`Which country won the FIFA World Cup in ${x}?`;
+P2("wc",WC,1,"2010|Spain;2014|Germany;2018|France;2022|Argentina;2002|Brazil;2006|Italy");
+P2("wc",WC,2,"1998|France;1994|Brazil;1986|Argentina;1978|Argentina;1966|England;1958|Brazil");
+P2("wc",WC,3,"1982|Italy;1990|West Germany;1974|West Germany;1970|Brazil");
+P2("wc",WC,4,"1930|Uruguay;1934|Italy;1938|Italy;1950|Uruguay;1954|West Germany;1962|Brazil");
+`0|In tennis, what is a score of zero called?|Love|Nil|Duck|Zip
+0|How many squares are on a standard chessboard?|64|48|72|81
+0|Which animal is the fastest on land?|Cheetah|Pronghorn|Lion|Greyhound
+0|How many bits are in a byte?|8|4|16|32
+0|Which planet has the Great Red Spot?|Jupiter|Saturn|Mars|Neptune
+0|In Greek mythology, who is the king of the gods?|Zeus|Poseidon|Hades|Apollo
+0|What is the largest organ of the human body?|Skin|Liver|Lungs|Heart
+0|Which Nintendo character is a plumber?|Mario|Link|Kirby|Donkey Kong
+1|Which chess piece moves in an L-shape?|Knight|Bishop|Rook|Queen
+1|What does “HTTP” stand for?|HyperText Transfer Protocol|High Transfer Text Protocol|HyperText Transmission Process|Hyper Terminal Transfer Program
+1|Who is credited with inventing the World Wide Web?|Tim Berners-Lee|Vint Cerf|Bill Gates|Steve Jobs
+1|In which game series would you find the Master Chief?|Halo|Gears of War|Destiny|Doom
+1|Which Polish studio developed “The Witcher 3: Wild Hunt”?|CD Projekt Red|Techland|11 bit studios|People Can Fly
+1|In which year was the first iPhone released?|2007|2005|2008|2009
+1|Which blood type is the universal donor for red blood cells?|O negative|AB positive|A negative|O positive
+1|Which part of the brain coordinates balance and movement?|Cerebellum|Hippocampus|Thalamus|Medulla
+1|Which Swedish company was founded by Ingvar Kamprad?|IKEA|Volvo|H&M|Spotify
+2|How many hearts does an octopus have?|Three|Two|Four|One
+2|Which spice is the most expensive by weight?|Saffron|Vanilla|Cardamom|Cinnamon
+2|From which plant is tequila made?|Blue agave|Sugarcane|Maize|Prickly pear
+2|Which Italian cheese is a key ingredient of tiramisu?|Mascarpone|Ricotta|Gorgonzola|Pecorino
+2|Which country has the longest coastline in the world?|Canada|Russia|Indonesia|Australia
+2|Which is the deepest lake in the world?|Lake Baikal|Lake Tanganyika|Caspian Sea|Crater Lake
+2|Which is the largest island in the Mediterranean?|Sicily|Sardinia|Cyprus|Crete
+2|What is the largest country in Africa by area?|Algeria|Democratic Republic of the Congo|Sudan|Libya
+2|Which woman was the first in space, in 1963?|Valentina Tereshkova|Sally Ride|Svetlana Savitskaya|Mae Jemison
+2|Which Mexican-born architect... |skip|x|x|x
+2|Who designed the Guggenheim Museum in Bilbao?|Frank Gehry|Zaha Hadid|Renzo Piano|Norman Foster
+2|In Greek mythology, who ferries the dead across the Styx?|Charon|Hermes|Thanatos|Cerberus
+2|Which Hindu deity is the remover of obstacles?|Ganesha|Shiva|Hanuman|Vishnu
+2|Which Korean writing system was created in the 15th century?|Hangul|Hanja|Kana|Hanzi
+2|Which city opened the world’s first underground metro in 1863?|London|Paris|New York|Berlin
+2|Which stock index tracks 30 large US companies?|Dow Jones Industrial Average|S&P 500|Nasdaq Composite|Russell 2000
+3|Which country has won the most Rugby World Cups?|South Africa|New Zealand|Australia|England
+3|Which grape is the sole variety of Chablis?|Chardonnay|Pinot Noir|Sauvignon Blanc|Riesling
+3|Which scale measures the heat of chili peppers?|Scoville scale|Brix scale|Richter scale|Mohs scale
+3|What is khachapuri, the Georgian dish, mainly filled with?|Cheese|Potato|Lamb|Walnuts
+3|Who directed “Seven Samurai”?|Akira Kurosawa|Yasujirō Ozu|Kenji Mizoguchi|Hayao Miyazaki
+3|Who directed the Polish film “Ida” (2013)?|Paweł Pawlikowski|Andrzej Wajda|Krzysztof Kieślowski|Roman Polański
+3|Who directed “Three Colours: Blue”?|Krzysztof Kieślowski|Andrzej Wajda|Roman Polański|Agnieszka Holland
+3|Which actor has won the most Academy Awards for acting?|Katharine Hepburn|Meryl Streep|Daniel Day-Lewis|Jack Nicholson
+3|Which company released the first commercial microprocessor, the 4004?|Intel|IBM|Motorola|Texas Instruments
+3|What is the default port for HTTPS?|443|80|8080|22
+3|What was the first widely popular graphical web browser, released in 1993?|Mosaic|Netscape Navigator|Internet Explorer|Opera
+3|Which animal has the longest gestation among land mammals?|African elephant|Rhinoceros|Giraffe|Hippopotamus
+3|Which tree species is the tallest in the world?|Coast redwood|Giant sequoia|Douglas fir|Mountain ash
+3|Which element sits at the centre of a chlorophyll molecule?|Magnesium|Iron|Copper|Zinc
+3|To which phylum do starfish belong?|Echinodermata|Cnidaria|Mollusca|Arthropoda
+3|Which is the only continent with no native ants?|Antarctica|Australia|Europe|South America
+3|What is the highest peak in Poland?|Rysy|Śnieżka|Giewont|Babia Góra
+3|Which spacecraft was the first to reach interstellar space, in 2012?|Voyager 1|Voyager 2|Pioneer 10|New Horizons
+3|Which moon of Jupiter is the most volcanically active?|Io|Europa|Ganymede|Callisto
+3|Who was the first American in space?|Alan Shepard|John Glenn|Gus Grissom|Scott Carpenter
+3|Which dwarf planet is the largest object in the asteroid belt?|Ceres|Vesta|Pallas|Eris
+3|Who first described cells, in 1665, using a microscope?|Robert Hooke|Antonie van Leeuwenhoek|Matthias Schleiden|Rudolf Virchow
+3|What is the most abundant protein in the human body?|Collagen|Keratin|Hemoglobin|Actin
+3|What is the SI unit of magnetic flux density?|Tesla|Weber|Gauss|Henry
+3|What is Avogadro’s number, approximately?|6.022 × 10²³|6.022 × 10²⁶|6.626 × 10²³|1.602 × 10²³
+3|Which economist wrote “The General Theory of Employment, Interest and Money”?|John Maynard Keynes|Milton Friedman|Friedrich Hayek|Adam Smith
+3|Which country issued the first paper money?|China|Persia|Greece|Sweden
+3|Which Mesopotamian king is the hero of an epic from about 2100 BC?|Gilgamesh|Hammurabi|Sargon|Nebuchadnezzar
+3|Who designed the Sydney Opera House?|Jørn Utzon|Frank Lloyd Wright|Le Corbusier|Oscar Niemeyer
+3|What is the Pantheon’s dome in Rome made of?|Concrete|Marble|Brick|Limestone
+3|Who created Tetris?|Alexey Pajitnov|Shigeru Miyamoto|Gunpei Yokoi|Hideo Kojima
+3|Which Valve game introduced the gravity gun?|Half-Life 2|Portal|Left 4 Dead|Team Fortress 2
+3|In which year was the full release of Minecraft?|2011|2009|2013|2014
+3|Which year did James Hunt win the F1 title, beating Niki Lauda by one point?|1976|1974|1978|1980
+3|What is the standard board size for professional Go?|19×19|13×13|9×9|21×21
+3|Which Slavic god is associated with thunder?|Perun|Veles|Svarog|Dazhbog
+3|What is the term for animals most active at dawn and dusk?|Crepuscular|Nocturnal|Diurnal|Aquatic
+4|Which chess opening begins 1.e4 e5 2.Nf3 Nc6 3.Bb5?|Ruy Lopez|Italian Game|Scotch Game|Sicilian Defence
+4|Which country won the first Olympic ice hockey gold in 1920?|Canada|United States|Sweden|Czechoslovakia
+4|Which film won the first Academy Award for Best Picture?|Wings|Sunrise|The Jazz Singer|Metropolis
+4|Who directed “Stalker” (1979)?|Andrei Tarkovsky|Sergei Eisenstein|Aleksandr Sokurov|Andrei Zvyagintsev
+4|Who invented quicksort in 1959?|Tony Hoare|Donald Knuth|Edsger Dijkstra|John von Neumann
+4|What does the “P” stand for in “P versus NP”?|Polynomial|Probabilistic|Parallel|Predicate
+4|Which river crosses the equator twice?|Congo|Nile|Amazon|Niger
+4|Which European country is doubly landlocked?|Liechtenstein|Switzerland|Austria|Luxembourg
+4|Which is the southernmost capital city of a sovereign state?|Wellington|Canberra|Santiago|Buenos Aires
+4|Which letter appears in no US state name?|Q|J|X|Z
+4|How is the Basque language classified?|Language isolate|Romance language|Celtic language|Slavic language
+4|Which metal has the highest melting point?|Tungsten|Osmium|Rhenium|Tantalum
+4|Which SI unit measures radioactive activity?|Becquerel|Sievert|Gray|Tesla
+4|What is the Chandrasekhar limit, approximately?|1.4 solar masses|0.5 solar masses|3 solar masses|10 solar masses
+4|Which country produces most of the world’s vanilla?|Madagascar|Indonesia|Mexico|Tahiti
+4|In Norse myth, what is the name of Odin’s eight-legged horse?|Sleipnir|Fenrir|Hugin|Jörmungandr
+4|In which year was the Rubik’s Cube invented?|1974|1971|1977|1980`.split("\n").filter(l=>!l.includes("|skip|")).forEach(l=>{const[t,q,a,...w]=l.split("|");B.push({c:"gen",t:+t,q,a,w})});
+const $=id=>document.getElementById(id),f=n=>"$"+n.toLocaleString("en-US"),sh=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(x=>x[1]);
+let G,i,jf,ja,opts,sel,locked,t,tm,cur,mute=false,ac,wc=false;
+function seenGet(){try{return JSON.parse(localStorage.getItem("mw_seen")||"[]")}catch(e){return[]}}
+function seenSet(s){try{localStorage.setItem("mw_seen",JSON.stringify(s))}catch(e){}}
+function build(){
+ let seen=seenGet(),out=[];
+ for(let tr=0;tr<5;tr++){const n=[4,3,3,2,3][tr];
+  const all=B.map((b,k)=>k).filter(k=>B[k].t===tr);let c=all.filter(k=>!seen.includes(k));
+  if(c.length<n){seen=seen.filter(k=>!all.includes(k));c=all}
+  c=sh(c);const pick=[],cnt={};
+  for(const k of c){const g=B[k].c;if((cnt[g]||0)<2){pick.push(k);cnt[g]=(cnt[g]||0)+1}if(pick.length===n)break}
+  for(const k of c){if(pick.length===n)break;if(!pick.includes(k))pick.push(k)}
+  seen.push(...pick);out.push(...pick);
+ }
+ seenSet(seen);
+ return out.map(k=>{const b=B[k];const w=b.w||(b.y?sh([-25,-12,-6,-3,3,6,12,25]).slice(0,3).map(d=>String(b.y+d)):sh([...POOL[b.c]].filter(x=>x!==b.a)).slice(0,3));return{q:b.q,a:b.a,w}});
+}
+function beep(fr,d=.15,ty="sine",v=.05,dl=0){if(mute)return;try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain();o.type=ty;o.frequency.value=fr;g.gain.value=v;g.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+dl+d);o.connect(g);g.connect(ac.destination);o.start(ac.currentTime+dl);o.stop(ac.currentTime+dl+d)}catch(e){}}
+const sfx={pick(){beep(440,.08,"triangle")},win(){[523,659,784,1047].forEach((x,k)=>beep(x,.3,"triangle",.05,k*.1))},lose(){[294,247,196,147].forEach((x,k)=>beep(x,.45,"sawtooth",.035,k*.2))},tick(){beep(880,.03,"square",.015)}};
+function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("on",s.id===id));scrollTo(0,0)}
+const floor=()=>{let b=0;SAFE.forEach(s=>{if(i>s)b=L[s]});return b},won=()=>i>0?L[i-1]:0;
+function ladder(){$("ladder").innerHTML=L.map((m,k)=>`<div class="l${SAFE.includes(k)||k==14?" safe":""}${k<i?" done":""}${k==i?" cur":""}"><span>${k+1}</span><span>${f(m)}</span></div>`).join("")}
+function start(){G=build();i=0;jf=ja=1;show("game");load()}
+function load(){
+ clearInterval(tm);locked=false;sel=null;cur=G[i];opts=sh([cur.a,...cur.w]);$("audbox").innerHTML="";
+ $("q").textContent=cur.q;$("q").style.animation="none";void $("q").offsetWidth;$("q").style.animation="";
+ $("pf").textContent=f(L[i]);ladder();
+ $("ans").innerHTML=opts.map((o,k)=>`<button class="a hex" data-k="${k}"><span class="in"><i>${"ABCD"[k]}:</i>${o}</span></button>`).join("");
+ document.querySelectorAll(".a").forEach(b=>b.onclick=()=>pick(+b.dataset.k));
+ jk();bar();timer();
+}
+const A=()=>document.querySelectorAll(".a"),goneN=()=>document.querySelectorAll(".a.gone").length;
+function jk(){$("jf").disabled=!jf||locked||goneN()>0;$("ja").disabled=!ja||locked}
+function bar(){
+ if(locked)return;const b=$("bar");
+ if(sel!==null){b.innerHTML=`<span class="final">Is that your final answer?</span><span><button class="btn walk" id="no">Change</button> <button class="btn go" id="yes">Final answer</button></span>`;$("no").onclick=unsel;$("yes").onclick=lock}
+ else{b.innerHTML=`<span class="msg">Choose an answer, or walk away with ${f(won())}.</span><button class="btn walk" id="wk">Walk away</button>`;$("wk").onclick=walk}
+}
+function unsel(){sel=null;A().forEach(x=>x.classList.remove("sel"));bar()}
+function pick(k){if(locked)return;sel=k;sfx.pick();A().forEach(x=>x.classList.toggle("sel",+x.dataset.k===k));bar()}
+function timer(){t=90;draw();tm=setInterval(()=>{t--;draw();if(t<=10&&t>0)sfx.tick();if(t<=0){clearInterval(tm);timeout()}},1000)}
+function draw(){$("tn").textContent=t;$("ring").style.strokeDashoffset=201.06*(1-t/90);$("clock").classList.toggle("low",t<=15)}
+$("jf").onclick=()=>{
+ if(!jf||locked)return;jf=0;const c=opts.indexOf(cur.a);
+ sh([0,1,2,3].filter(k=>k!==c)).slice(0,2).forEach(k=>A()[k].classList.add("gone"));
+ if(sel!==null&&A()[sel].classList.contains("gone"))unsel();sfx.win();jk();
+};
+$("ja").onclick=()=>{
+ if(!ja||locked)return;ja=0;jk();sfx.win();
+ const c=opts.indexOf(cur.a),alive=[0,1,2,3].filter(k=>!A()[k].classList.contains("gone")),rest=alive.filter(k=>k!==c);
+ let top=Math.round(94-i*4.2+(Math.random()*12-6));top=Math.max(34,Math.min(92,top));if(alive.length===2)top=Math.max(top,55);
+ const r=rest.map(()=>Math.random()+.2),s=r.reduce((a,b)=>a+b,0),pc={[c]:top};let left=100-top;
+ rest.forEach((k,n)=>{pc[k]=n===rest.length-1?left:Math.round((100-top)*r[n]/s);left-=pc[k]});
+ $("audbox").innerHTML=`<div class="aud">${[0,1,2,3].map(k=>`<div><em>${pc[k]!==undefined?pc[k]+"%":"—"}</em><b data-h="${pc[k]||0}"></b><span>${"ABCD"[k]}</span></div>`).join("")}</div>`;
+ requestAnimationFrame(()=>document.querySelectorAll(".aud b").forEach(b=>b.style.height=(+b.dataset.h*.6)+"%"));
+};
+function lock(){
+ locked=true;clearInterval(tm);jk();$("bar").innerHTML=`<span class="final">Let’s see…</span>`;const c=opts.indexOf(cur.a);
+ setTimeout(()=>{
+  A().forEach(x=>x.classList.remove("sel"));A()[c].classList.add("ok");
+  if(sel===c){sfx.win();
+   if(i===14)return setTimeout(()=>end("win"),1800);
+   $("bar").innerHTML=`<span class="final">Correct! ${f(L[i])}${SAFE.includes(i)?" is yours, whatever happens.":""}</span><button class="btn go" id="nx">Next question</button>`;$("nx").onclick=()=>{i++;load()};
+  }else{A()[sel].classList.add("bad");sfx.lose();setTimeout(()=>end("lose"),2400)}
+ },1800);
+}
+function walk(){
+ if(!wc){wc=true;$("wk").textContent=`Take ${f(won())}?`;setTimeout(()=>{wc=false;if($("wk"))$("wk").textContent="Walk away"},3000);return}
+ wc=false;clearInterval(tm);locked=true;jk();A()[opts.indexOf(cur.a)].classList.add("ok");
+ $("bar").innerHTML=`<span class="final">The answer was ${cur.a}.</span>`;setTimeout(()=>end("walk"),2600);
+}
+function timeout(){locked=true;jk();sfx.lose();$("bar").innerHTML=`<span class="final">Time’s up.</span>`;A()[opts.indexOf(cur.a)].classList.add("ok");setTimeout(()=>end("time"),2400)}
+function end(how){
+ clearInterval(tm);show("end");let p,h,tx;
+ if(how==="win"){p=1e6;h="Congratulations";tx="You answered all fifteen questions. You’re a millionaire."}
+ else if(how==="walk"){p=won();h="You walked away";tx=`You leave the hot seat with ${f(p)}. Wise, or just cautious? We’ll never know.`}
+ else{p=floor();h=how==="time"?"Out of time":"Wrong answer";tx=p?`You fall back to your safe haven and leave with ${f(p)}.`:"No safe haven reached, so you leave empty-handed."}
+ $("eh").textContent=h;$("ep").textContent=f(p);$("et").textContent=tx;
+}
+$("play").onclick=start;$("again").onclick=start;
+$("mute").onclick=()=>{mute=!mute;$("mute").textContent=mute?"Sound off":"Sound on"};
+</script></body></html>
